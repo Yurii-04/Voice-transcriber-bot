@@ -7,6 +7,8 @@ import { IConfigService } from '../config/config.interface';
 import { HandlerBase } from '../handlers/handler.class';
 import { VoiceHandler } from '../handlers/voice.handler';
 import { IPrismaService } from '../prisma/prisma.interface';
+import { constants } from '../constants';
+import { TranscribeCommand } from '../commands/transcribe.command';
 
 export class Bot {
   bot: Telegraf<IBotContext>;
@@ -20,12 +22,33 @@ export class Bot {
     this.bot = new Telegraf<IBotContext>(this.configService.get('BOT_TOKEN'));
   }
 
+  private setupErrorHandling() {
+    this.bot.catch((err, ctx) => {
+      console.error(err);
+      const msgId = ctx?.message?.message_id;
+
+      if (msgId) {
+        void ctx.reply(constants.errors.messages.somethingWentWrong, {
+          reply_parameters: { message_id: msgId },
+        });
+      } else {
+        void ctx.reply(constants.errors.messages.somethingWentWrong);
+      }
+    });
+  }
+
   async init() {
-    this.commands = [new StartCommand(this.bot), new HelpCommand(this.bot)];
-    this.handlers = [new VoiceHandler(this.bot, this.configService)];
+    this.commands = [
+      new StartCommand(this.bot, this.configService),
+      new HelpCommand(this.bot),
+      new TranscribeCommand(this.bot),
+    ];
+    this.handlers = [new VoiceHandler(this.bot)];
 
     this.commands.forEach((command) => command.handle());
     this.handlers.forEach((handler) => handler.handle());
+
+    this.setupErrorHandling();
 
     await this.bot.telegram.setMyCommands(
       this.commands.map((cmd) => ({

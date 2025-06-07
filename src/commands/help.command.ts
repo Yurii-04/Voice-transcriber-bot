@@ -5,7 +5,7 @@ import { constants } from '../constants';
 
 export class HelpCommand extends CommandBase {
   command = 'help';
-  description = 'get help about bot';
+  description = 'Get help about bot';
 
   constructor(bot: Telegraf<IBotContext>) {
     super(bot);

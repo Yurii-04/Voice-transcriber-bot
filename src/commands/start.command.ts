@@ -2,13 +2,19 @@ import { CommandBase } from './command.class';
 import { IBotContext } from '../context/context.interface';
 import { Telegraf } from 'telegraf';
 import { constants } from '../constants';
+import { IConfigService } from '../config/config.interface';
 
 export class StartCommand extends CommandBase {
+  private readonly telegramGroupUrl: string;
   command = 'start';
   description = 'start bot';
 
-  constructor(bot: Telegraf<IBotContext>) {
+  constructor(
+    bot: Telegraf<IBotContext>,
+    private readonly configService: IConfigService
+  ) {
     super(bot);
+    this.telegramGroupUrl = `https://t.me/${this.configService.get('BOT_USERNAME')}?startgroup=true`;
   }
 
   handle(): void {
@@ -20,7 +26,7 @@ export class StartCommand extends CommandBase {
               [
                 {
                   text: constants.commands.buttons.addBotToChat,
-                  url: constants.urls.telegramGroupUrl,
+                  url: this.telegramGroupUrl,
                 },
               ],
             ],
