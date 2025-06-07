@@ -1,5 +1,5 @@
 import { Telegraf } from 'telegraf';
-import { CommandBase, CommandBasePrisma } from '../commands/command.class';
+import { CommandBase } from '../commands/command.class';
 import { StartCommand } from '../commands/start.command';
 import { HelpCommand } from '../commands/help.command';
 import { IBotContext } from '../context/context.interface';
@@ -12,7 +12,7 @@ import { TranscribeCommand } from '../commands/transcribe.command';
 
 export class Bot {
   bot: Telegraf<IBotContext>;
-  commands: CommandBase[] | CommandBasePrisma = [];
+  commands: CommandBase[] = [];
   handlers: HandlerBase[] = [];
 
   constructor(
@@ -40,7 +40,7 @@ export class Bot {
   async init() {
     this.commands = [
       new StartCommand(this.bot, this.configService),
-      new HelpCommand(this.bot),
+      new HelpCommand(this.bot, this.configService),
       new TranscribeCommand(this.bot),
     ];
     this.handlers = [new VoiceHandler(this.bot)];
