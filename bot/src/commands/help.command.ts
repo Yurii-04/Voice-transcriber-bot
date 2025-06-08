@@ -18,7 +18,22 @@ export class HelpCommand extends CommandBase {
   handle() {
     this.bot.help((ctx) => {
       if (ctx.chat.type === 'private') {
-        ctx.reply('HElP');
+        ctx.reply(constants.commands.help.text, {
+          reply_markup: {
+            inline_keyboard: [
+              [
+                {
+                  text: 'GitHub repository',
+                  url: 'https://github.com/Yurii-04/Voice-transcriber-bot',
+                },
+                {
+                  text: 'My profile',
+                  url: `${constants.urls.tMe}yura_2104`,
+                },
+              ],
+            ],
+          },
+        });
       } else {
         ctx.reply(constants.commands.contactMe.text, {
           reply_markup: {

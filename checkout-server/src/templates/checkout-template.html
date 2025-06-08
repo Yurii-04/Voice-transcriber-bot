@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Checkout</title>
+</head>
+<body>
+<div id="checkout-container"></div>
+<script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+<script>
+  Paddle.Environment.set("sandbox");
+  Paddle.Initialize({
+    token: '{{token}}'
+  });
+  Paddle.Checkout.open({
+    transactionId: "{{transactionId}}",
+    displayMode: "inline",
+    frameTarget: "checkout-container"
+  });
+</script>
+</body>
+</html>

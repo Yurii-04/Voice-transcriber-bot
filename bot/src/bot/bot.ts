@@ -9,6 +9,8 @@ import { VoiceHandler } from '../handlers/voice.handler';
 import { IPrismaService } from '../prisma/prisma.interface';
 import { constants } from '../constants';
 import { TranscribeCommand } from '../commands/transcribe.command';
+import { SubscribeCommand } from '../commands/subscribe.command';
+import { IPaddleService } from '../paddle/paddle.interface';
 
 export class Bot {
   bot: Telegraf<IBotContext>;
@@ -17,7 +19,8 @@ export class Bot {
 
   constructor(
     private readonly configService: IConfigService,
-    private readonly prismaService: IPrismaService
+    private readonly prismaService: IPrismaService,
+    private readonly paddleService: IPaddleService
   ) {
     this.bot = new Telegraf<IBotContext>(this.configService.get('BOT_TOKEN'));
   }
@@ -42,7 +45,9 @@ export class Bot {
       new StartCommand(this.bot, this.configService),
       new HelpCommand(this.bot, this.configService),
       new TranscribeCommand(this.bot),
+      new SubscribeCommand(this.bot, this.paddleService),
     ];
+
     this.handlers = [new VoiceHandler(this.bot)];
 
     this.commands.forEach((command) => command.handle());
